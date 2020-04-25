@@ -1,13 +1,12 @@
 #!/bin/bash
 
+# Clonigng repository
 clone() {
-    echo "\n"
-    echo "---------------- 🗂 Clonando repositório 🗂 ----------------"
     mkdir wp-app
     mkdir wp-data
     cd wp-app/
 
-    echo -n "Url do repositório GIT"
+    echo -n "GIT repository web url: "
     read gitRepoUrl
 
     git clone "$gitRepoUrl" ./
@@ -15,52 +14,46 @@ clone() {
     cd ..
 }
 
-echo "\n"
-echo "---------------- 🔨 Atualizando o sistema 🔨 ----------------"
+# Updating system
 sudo apt update
 sudo apt dist-upgrade -y
 
-echo "\n"
-echo "---------------- 🧪 Instalando docker 🧪 ----------------"
+# Installing docker
 sudo apt install apt-transport-https ca-certificates curl software-properties-common git
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
 sudo apt update
 sudo apt install docker-ce
-# sudo usermod -aG docker ${USER}
+sudo usermod -aG docker ${USER}
 
-echo -n "O que deseja fazer? (N)ovo projeto Wordpress / (C)lonar projeto existente / (S)air? [N] "
+echo -n "What to do next? (N)ew Wordpress project / (C)lone existing project / (Q)uit? [N] "
 read response
 
 case "$response" in
     n|N|"")
-        echo "---------------- 🗂 Criando projeto Wordpress 🗂 ----------------"
+        echo ""
     ;;
     c|C)
         clone
     ;;
-    s|S)
-        echo "Saindo..."
+    q|Q)
+        echo "Quitting..."
         exit
     ;;
     *)
-        echo "Opção inválida"
+        echo "Invalid option, quitting..."
     ;;
 esac
 
-echo "\n"
-echo "---------------- 📦 Criando containers 📦 ----------------"
+# Creating containers
 docker-compose up -d
 
-echo "\n"
-echo "---------------- ❌ Alterando permissões ❌ ----------------"
+# Changin project permissions
 sudo chmod 775 -R ./
 sudo chown ${USER}:${USER} -R ./
 
-echo "\n"
-echo "---------------- 🌐 Abrindo o projeto no VSCode 🌐 ----------------"
+# Opening project
 cd wp-app/
 code .
 
-echo "\n"
-echo "---------------- 🎉 Tudo pronto! 🎉 ----------------"
+exit
