@@ -42,6 +42,7 @@ case "$response" in
     ;;
     *)
         echo "Invalid option, quitting..."
+        exit
     ;;
 esac
 
@@ -51,6 +52,33 @@ docker-compose up -d
 # Changin project permissions
 sudo chmod 775 -R ./
 sudo chown ${USER}:${USER} -R ./
+
+case "$response" in
+    c|C)
+        echo -n "Now, it's time to import your project's databse. Be sure that a \"dump.sql\" file exist on \"wp-data\" directory. Type \"ok\" to continue... "
+        read importDatabaseResponse
+
+        case "$importDatabaseResponse" in
+            ok|Ok|oK|OK)
+                file="./wp-data/dump.sql"
+                if [ -f "$file" ]
+                then
+                    ./import.sh
+                else
+                    echo "The \"wp-data/dump.sql\" does not exists, skiping..."
+                fi
+            ;;
+            *)
+                echo "Invalid option, quitting..."
+                exit
+            ;;
+        esac
+    ;;
+    *)
+        echo "Invalid option, quitting..."
+        exit
+    ;;
+esac
 
 # Opening project
 cd wp-app/
